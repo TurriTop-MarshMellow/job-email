@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>求职进度 · Inbox</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <div class="shell">
+    <aside class="rail"><div class="brand">J<span>.</span></div><div class="rail-icon active">▦</div><div class="rail-icon">✉</div><div class="rail-bottom">本地</div></aside>
+    <main>
+      <header><div><div class="eyebrow">PERSONAL JOB TRACKER</div><h1>求职进度</h1></div><div id="updated" class="updated">本地邮件工作台</div></header>
+      <section class="intro"><div><div class="intro-label">APPLICATION OVERVIEW</div><h2>每一封邮件，都是进度的一部分。</h2><p>邮件沉淀为事件，岗位状态由固定规则推算。所有判断都能回到原文。</p></div><div class="intro-mark">J<span>/</span></div></section>
+      <section class="stats" id="stats"></section>
+      <section class="toolbar"><div class="tabs"><button class="tab selected" data-view="company">按公司</button><button class="tab" data-view="category">按岗位类型</button></div><div class="search-wrap"><span>⌕</span><input id="search" type="search" placeholder="搜索公司或岗位"></div></section>
+      <section id="content" class="content"></section>
+      <footer><span>求职进度 Agent</span><span>邮件是事件 · 进度是状态</span></footer>
+    </main>
+  </div>
+  <script src="/app.js" defer></script>
+</body>
+</html>
