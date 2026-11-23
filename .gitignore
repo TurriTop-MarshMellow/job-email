@@ -3,3 +3,5 @@ __pycache__/
 .env
 .venv/
 data/applications.json
+data/mailbox/
+data/redacted_mailbox/

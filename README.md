@@ -16,6 +16,28 @@ python -m job_email
 python -m job_email run
 ```
 
+## 批量生成脱敏副本
+
+预览待处理邮件（不会写文件）：
+
+```powershell
+python -m job_email redact --preview
+```
+
+生成副本（原邮件不变）：
+
+```powershell
+python -m job_email redact
+```
+
+如果要确保自己的中文姓名都被替换，追加姓名参数（可重复多个）：
+
+```powershell
+python -m job_email redact --name "张三" --name "张小三"
+```
+
+默认读取 `data/mailbox/`，写入 `data/redacted_mailbox/`，并生成 `redaction-report.json`。工具移除常见个人邮箱、手机号、网页/短链以及常见称呼中的部分中文姓名，重新生成精简邮件头并丢弃附件。姓名规则可能漏掉正文中的其他姓名；地址、薪资或图片内文字也无法可靠识别，分享/提交之前必须人工抽查副本。输入和输出目录均已加入 `.gitignore`。
+
 只启动页面（需要先生成数据）：
 
 ```powershell

@@ -58,16 +58,24 @@ def role_category(role: str) -> str:
     text = unicodedata.normalize("NFKC", role or "").lower()
     if "运营" in text:
         return "运营"
+    if any(word in text for word in ("助理", "行政", "秘书", "总监", "人力", "招聘", "hr", "财务", "会计", "审计", "法务")):
+        return "职能"
     if "产品" in text or "product" in text:
         return "产品"
     if any(word in text for word in ("工程", "开发", "算法", "前端", "后端", "测试", "数据", "研发", "工程师", "engineer", "developer", "客户端")):
         return "技术"
     if any(word in text for word in ("设计", "design", "体验")):
         return "设计"
+    if any(word in text for word in ("人力", "招聘", "hr", "人才", "recruit")):
+        return "人力资源"
     if any(word in text for word in ("市场", "营销", "品牌", "marketing")):
         return "市场"
-    if any(word in text for word in ("人力", "财务", "法务", "行政")):
+    if any(word in text for word in ("财务", "会计", "审计", "法务", "行政", "秘书")):
         return "职能"
+    if any(word in text for word in ("销售", "商务拓展", "客户经理", "sales", "business development")):
+        return "销售/商务"
+    if any(word in text for word in ("客服", "客户成功", "客户支持", "customer success", "support")):
+        return "客户服务"
     return "其他"
 
 
@@ -75,7 +83,7 @@ def merge_events(events: list[Event], threshold: float = 0.6) -> tuple[list[Appl
     buckets: dict[tuple[str, str], list[Event]] = defaultdict(list)
     for event in events:
         company_key = normalize_company(event.company) or "未知公司"
-        role_key = normalize_role(event.role) or "未知岗位"
+        role_key = normalize_role(event.role) or "岗位待确认"
         buckets[(company_key, role_key)].append(event)
 
     applications: list[Application] = []
@@ -87,7 +95,7 @@ def merge_events(events: list[Event], threshold: float = 0.6) -> tuple[list[Appl
         company = _display_name([event.company for event in kept])
         variants = list(dict.fromkeys(event.role for event in kept))
         role = _display_name(variants)
-        unknown = company_key == "未知公司" or role_key == "未知岗位"
+        unknown = company_key == "未知公司" or role_key == "岗位待确认"
         flags: list[str] = []
         if reviewed or unknown:
             flags.append("待确认")
@@ -101,7 +109,7 @@ def merge_events(events: list[Event], threshold: float = 0.6) -> tuple[list[Appl
                 id=app_id,
                 company=company,
                 company_key=company_key,
-                role=role,
+                role=role if role_key != "岗位待确认" else "岗位待确认",
                 role_key=role_key,
                 category=role_category(role),
                 status=status,

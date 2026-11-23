@@ -8,6 +8,7 @@ import webbrowser
 
 from job_email.config import load_config
 from job_email.pipeline import run_pipeline
+from job_email.redact import batch_redact
 from job_email.serve import serve
 
 
@@ -20,6 +21,12 @@ def main(argv: list[str] | None = None) -> None:
     run = sub.add_parser("run", help="只跑抽取和状态推算，写出 JSON")
     run.add_argument("--mailbox", help="邮件目录，默认用 config.json")
 
+    redact = sub.add_parser("redact", help="批量生成脱敏邮件副本，原件不变")
+    redact.add_argument("--input", default="data/mailbox")
+    redact.add_argument("--output", default="data/redacted_mailbox")
+    redact.add_argument("--name", action="append", default=[], help="要全文替换的姓名；可重复指定")
+    redact.add_argument("--preview", action="store_true", help="只列出待处理邮件，不写文件")
+
     web = sub.add_parser("serve", help="打开本地页面")
     web.add_argument("--port", type=int, default=8765)
     web.add_argument("--rebuild", action="store_true", help="打开页面前先重算")
@@ -28,6 +35,21 @@ def main(argv: list[str] | None = None) -> None:
     args = parser.parse_args(argv)
     config = load_config()
     command = args.command or "demo"
+
+    if command == "redact":
+        input_dir = config.root / args.input if not _is_abs(args.input) else _path(args.input)
+        output_dir = config.root / args.output if not _is_abs(args.output) else _path(args.output)
+        if args.preview:
+            files = sorted(input_dir.rglob("*.eml")) if input_dir.exists() else []
+            print(f"找到 {len(files)} 封 EML；预览模式未写入文件。")
+            for path in files:
+                print(path.relative_to(input_dir))
+        else:
+            results = batch_redact(input_dir, output_dir, args.name)
+            print(f"已生成 {len(results)} 封脱敏副本：{output_dir}")
+            print(f"抽查报告：{output_dir / 'redaction-report.json'}")
+            print("自动处理邮箱、手机号、常见短链和部分称呼姓名；住址、薪资及图片内容需人工检查。")
+        return
 
     if command == "run":
         if args.mailbox:
