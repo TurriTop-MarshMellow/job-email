@@ -1,0 +1,26 @@
+{
+  "mailbox_dir": "data/mailbox",
+  "output_path": "data/applications.json",
+  "confidence_threshold": 0.6,
+  "keywords": [
+    "面试",
+    "笔试",
+    "简历",
+    "录用",
+    "投递",
+    "网申",
+    "应聘",
+    "求职",
+    "岗位",
+    "人才库",
+    "offer",
+    "interview",
+    "hiring"
+  ],
+  "sender_domain_hints": ["jobs.", "career", "recruit", "zhaopin", "hire."],
+  "company_by_domain": {},
+  "llm": {
+    "base_url": "https://api.openai.com/v1",
+    "model": "gpt-4o-mini"
+  }
+}
